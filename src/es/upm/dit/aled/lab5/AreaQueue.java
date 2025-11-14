@@ -13,6 +13,39 @@ import es.upm.dit.aled.lab5.gui.Position2D;
  * @author rgarciacarmona
  */
 public class AreaQueue extends Area {
+	
+	Queue<Patient> waitQueue = new LinkedList<Patient>();
+	
+	
+	public AreaQueue(String name, int time, int capacity, Position2D position) {
+		super(name, time, capacity, position);
+		this.waitQueue = new LinkedList<Patient>();
 
-	// TODO
-}
+	}
+	
+	@Override
+	public synchronized void enter(Patient patient) {
+		// Añadimos el paciente al final de la cola:
+		waitQueue.add(patient);
+		
+		// Añadimos ahora las 2 condiciones que nos piden:
+		// 1. El número de pacientes NO puede ser mayor que la capacidad. En caso de que lo sea, este esperará
+		// 2. Si el paciente no es primero de la cola, esperará
+		try {
+		while (numPatients >= capacity || waitQueue.peek() != patient) {
+			waiting++;
+			wait();
+			waiting--;
+		}
+		// Si no cumple la condición, entrará a la ubicación el primero de ellos y se borrará a continuación:
+		waitQueue.remove(patient);
+		// Aumentamos el número de pacientes:
+		numPatients++;
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	}
+

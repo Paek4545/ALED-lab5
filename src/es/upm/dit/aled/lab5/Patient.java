@@ -164,7 +164,34 @@ public class Patient extends Thread {
 	 */
 	@Override
 	public void run() {
-		// TODO
+		// Volvemos al punto 1 con un bucle:
+				while(indexProtocol < protocol.size()) {
+					// Intentamos acceder a la ubición actual:
+					location.enter(this);
+					
+					// Ser atendido en la ubicación actual: 
+					attendedAtLocation();
+					
+					// Después de ser atendido, sale de su ubicación:
+					location.exit(this);
+					
+					// Avanzar al siguiente paso en su protocolo:
+					advanceProtocol();
+					
+					// Después de avanzar al último protocolo también se quedarán esperando3
+					try {
+						sleep(location.getTime());
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+				// Cuando termine este bucle, eliminamos a los pacientes:
+				EmergencyRoomGUI gui = EmergencyRoomGUI.getInstance();
+				gui.removePatient(this);
+				
+				
+				
+			}
+		
 	}
 
-}

@@ -40,7 +40,10 @@ public class Area {
 	 * @param position The location of the Area in the GUI.
 	 */
 	public Area(String name, int time, int capacity, Position2D position) {
-		// TODO
+		this.name = name;
+		this.time = time;
+		this.capacity = capacity;
+		this.position = position;
 		this.color = Color.GRAY; // Default color
 	}
 
@@ -96,8 +99,24 @@ public class Area {
 	 * 
 	 * @param p The patient that wants to enter.
 	 */
-	// TODO: method enter
 	
+	// TODO: method enter
+	public synchronized void enter(Patient p) {
+		try {
+			// Mientras el área esté llena el paciente debe de esperar
+		while (numPatients >= capacity) {
+			waiting++; // Si el paciente está forzado a esperar, waiting aumenta en 1
+			wait();	
+			// El paciente ha logrado accede a las sección --> Waiting se reduce en 1
+						waiting--;
+		}
+		// El paciente entra al área
+		numPatients++;
+		
+		} catch(InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
 	/**
 	 * Thread safe method that allows a Patient to exit the area. After the Patient
 	 * has left, this method notifys all waiting Patients.
@@ -105,12 +124,23 @@ public class Area {
 	 * @param p The patient that wants to enter.
 	 */
 	// TODO method exit
+	public synchronized void exit(Patient p) {
+		// Los pacientes salen del area y notifica a todos los pacientes en espera
+		numPatients--;
+		notifyAll();
+	}
 	
 	/**
 	 * Returns the capacity of the Area. This method must be thread safe.
 	 * 
 	 * @return The capacity.
 	 */
+	
+	public int getCapacity() {
+		return capacity;
+	}
+
+	
 	// TODO: method getCapacity
 	
 	/**
@@ -119,13 +149,18 @@ public class Area {
 	 * @return The number of Patients being treated.
 	 */
 	// TODO: method getNumPatients
-
+	public synchronized int getNumPatients() {
+		return numPatients;
+	}
 	/**
 	 * Returns the current number of Patients waiting to be treated at the Area. This method must be thread safe.
 	 * 
 	 * @return The number of Patients waiting to be treated.
 	 */
 	// TODO method getWaiting
+	public int getWaiting() {
+		return waiting;
+	}
 
 	@Override
 	public int hashCode() {

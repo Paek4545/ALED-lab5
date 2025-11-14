@@ -94,7 +94,7 @@ public class EmergencyRoom {
 				int time = in.nextInt();
 				int capacity = in.nextInt();
 				String name = in.next().trim();
-				Area area = new Area(name, time, capacity, new Position2D(x, y));
+				Area area = new AreaQueue(name, time, capacity, new Position2D(x, y));
 				// Assign a random-ish color for visualization
 				area.setColor(Color.getHSBColor(rand.nextFloat(), 0.3f, 0.9f));
 				areas.put(name, area);
